@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import JGProgressHUD
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
 	
@@ -138,7 +139,7 @@ class LoginViewController: UIViewController {
 		
 		// Firebase Log In
 		
-		FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self] authResult, error in 
+		FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self] authResult, error in
 			guard let strongSelf = self else {
 				return
 			}
@@ -153,9 +154,27 @@ class LoginViewController: UIViewController {
 			}
 			
 			let user = result.user
+			
+//			let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+//			DatabaseManager.shared.getDataFor(path: safeEmail, completion: { result in
+//				switch result {
+//				case .success(let data):
+//					guard let userData = data as? [String: Any],
+//						let firstName = userData["first_name"] as? String,
+//						let lastName = userData["last_name"] as? String else {
+//							return
+//					}
+//					UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+//
+//				case .failure(let error):
+//					print("Failed to read data with error \(error)")
+//				}
+//			})
+			
+			UserDefaults.standard.set(email, forKey: "email")
+			
 			print("Logged in User: \(user)")
 			strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-			
 		})
 		
 		
