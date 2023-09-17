@@ -127,7 +127,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
 			
 			
 			
-			DatabaseManager.shared.createNewConversation(with: otherUserEmail, firstMessage: mmessage, completion: { success in 
+			DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: mmessage, completion: { success in 
 				if success {
 					print("message sent")
 				}
@@ -188,7 +188,6 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
 			return sender
 		}
 		fatalError("Self Sender is nil, email should be cached")
-		return Sender(photoURL: "", senderId: "12", displayName: "")
 	}
 	
 	

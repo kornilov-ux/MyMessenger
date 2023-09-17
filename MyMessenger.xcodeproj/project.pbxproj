@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		240630FD2AB7261C00663DB4 /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240630FC2AB7261C00663DB4 /* ConversationTableViewCell.swift */; };
 		2426A9F32AB2608B003E64B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426A9F22AB2608B003E64B2 /* AppDelegate.swift */; };
 		2426A9F52AB2608B003E64B2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426A9F42AB2608B003E64B2 /* SceneDelegate.swift */; };
 		2426A9FA2AB2608B003E64B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2426A9F82AB2608B003E64B2 /* Main.storyboard */; };
@@ -46,6 +47,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		240630FC2AB7261C00663DB4 /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
 		2426A9EF2AB2608B003E64B2 /* MyMessenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMessenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2426A9F22AB2608B003E64B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2426A9F42AB2608B003E64B2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				2426AA072AB26159003E64B2 /* Storyboard */,
 				2426A9FB2AB2608B003E64B2 /* Assets.xcassets */,
 				24447DB42AB52396008A25C2 /* NewConversationCell.swift */,
+				240630FC2AB7261C00663DB4 /* ConversationTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				2426AA1A2AB266BC003E64B2 /* LoginViewController.swift in Sources */,
 				2426AA1C2AB266D0003E64B2 /* RegisterViewController.swift in Sources */,
 				2426AA262AB26783003E64B2 /* Extension.swift in Sources */,
+				240630FD2AB7261C00663DB4 /* ConversationTableViewCell.swift in Sources */,
 				2426AA222AB26726003E64B2 /* VideoPlayerViewController.swift in Sources */,
 				24447DB32AB51D91008A25C2 /* SearchResult.swift in Sources */,
 				2426A9F32AB2608B003E64B2 /* AppDelegate.swift in Sources */,

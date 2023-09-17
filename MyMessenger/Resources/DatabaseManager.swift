@@ -129,7 +129,7 @@ extension DatabaseManager {
 extension DatabaseManager {
 	
 	/// Creates a new conversation with target user emamil and first message sent
-	public func createNewConversation(with otherUserEmail: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {
+	public func createNewConversation(with otherUserEmail: String, name: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {
 		guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
 			   else {
 			return
@@ -179,7 +179,7 @@ extension DatabaseManager {
 			let newConversationData: [String: Any] = [
 				"id": conversationId,
 				"other_user_email": otherUserEmail,
-				"name": "",
+				"name": name,
 				"latest_message": [
 					"date": dateString,
 					"message": message,
@@ -199,9 +199,10 @@ extension DatabaseManager {
 						completion(false)
 						return
 					}
-					self?.finishCreatingConversation(conversationID: conversationId,
-											   firstMessage: firstMessage,
-											   completion: completion)
+					self?.finishCreatingConversation(name: name,
+													 conversationID: conversationId,
+													 firstMessage: firstMessage,
+													 completion: completion)
 				})
 				
 			}
@@ -217,16 +218,17 @@ extension DatabaseManager {
 						completion(false)
 						return
 					}
-					self?.finishCreatingConversation(conversationID: conversationId,
-											   firstMessage: firstMessage,
-											   completion: completion)
+					self?.finishCreatingConversation(name: name, 
+													 conversationID: conversationId,
+													 firstMessage: firstMessage,
+													 completion: completion)
 				})
 			}
 		})
 		
 	}
 	
-	private func finishCreatingConversation( conversationID: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {
+	private func finishCreatingConversation(name: String, conversationID: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {
 		
 		let messageDate = firstMessage.sentDate
 		let dateString = ChatViewController.dateFormatter.string(from: messageDate)
@@ -270,7 +272,8 @@ extension DatabaseManager {
 			"content": message,
 			"date": dateString,
 			"sender_email": currentUserEmail,
-			"is_read": false
+			"is_read": false,
+			"name": name
 		]
 		
 		let value: [String: Any] = [
@@ -289,12 +292,38 @@ extension DatabaseManager {
 	}
 	
 	/// Fetches and returns all conversations for the user with passed in email
-	public func getAllConversations(for email: String, completion: @escaping (Result<String, Error>) -> Void) {
-		
+	public func getAllConversations(for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void) {
+		database.child("\(email)/conversations").observe(.value, with: { snapshot in 
+			guard let value = snapshot.value as? [[String: Any]] else {
+				completion(.failure(DatabaseError.failedToFetch))
+				return
+			}
+			
+			let conversations: [Conversation] = value.compactMap({ dictionary in
+				guard let conversationId = dictionary["id"] as? String,
+					  let name = dictionary["name"] as? String,
+					  let otherUserEmail = dictionary["other_user_email"] as? String,
+					  let latestMessage = dictionary["latest_message"] as? [String: Any],
+					  let date = latestMessage["date"] as? String,
+					  let message = latestMessage["message"] as? String,
+					  let isRead = latestMessage["is_read"] as? Bool else {
+					return nil
+				}
+				
+				let latestMmessageObject = LatestMessage(date: date,
+														 text: message,
+														 isRead: isRead)
+				return Conversation(id: conversationId,
+									name: name,
+									otherUserEmail: otherUserEmail,
+									latestMessage: latestMmessageObject)
+			})
+			completion(.success(conversations))
+		})
 	}
 	
 	/// Gets all messages for a given conversatino
-	public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<String, Error>) -> Void) {
+	public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<[Message], Error>) -> Void) {
 		
 	}
 	
@@ -304,22 +333,6 @@ extension DatabaseManager {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
