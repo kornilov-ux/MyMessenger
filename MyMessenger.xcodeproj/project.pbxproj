@@ -20,6 +20,7 @@
 		2426AA222AB26726003E64B2 /* VideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426AA212AB26726003E64B2 /* VideoPlayerViewController.swift */; };
 		2426AA242AB26737003E64B2 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426AA232AB26737003E64B2 /* PhotoViewerViewController.swift */; };
 		2426AA262AB26783003E64B2 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426AA252AB26783003E64B2 /* Extension.swift */; };
+		243C781B2BFE6C2600B654DD /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243C781A2BFE6C2600B654DD /* ChatModels.swift */; };
 		24447D7F2AB26C46008A25C2 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24447D7E2AB26C46008A25C2 /* ConversationViewController.swift */; };
 		24447D842AB37393008A25C2 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 24447D832AB37393008A25C2 /* FirebaseAnalytics */; };
 		24447D862AB37393008A25C2 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 24447D852AB37393008A25C2 /* FirebaseAnalyticsSwift */; };
@@ -62,6 +63,7 @@
 		2426AA212AB26726003E64B2 /* VideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewController.swift; sourceTree = "<group>"; };
 		2426AA232AB26737003E64B2 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		2426AA252AB26783003E64B2 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		243C781A2BFE6C2600B654DD /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
 		24447D7E2AB26C46008A25C2 /* ConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		24447D972AB37494008A25C2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		24447D992AB3A984008A25C2 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
@@ -120,7 +122,6 @@
 			children = (
 				24447D972AB37494008A25C2 /* GoogleService-Info.plist */,
 				2426AA0B2AB261C2003E64B2 /* Resources */,
-				2426AA092AB2618B003E64B2 /* ViewModels */,
 				2426AA082AB2617D003E64B2 /* Models */,
 				2426AA062AB26143003E64B2 /* Views */,
 				2426AA0A2AB261A2003E64B2 /* Controllers */,
@@ -153,15 +154,9 @@
 			isa = PBXGroup;
 			children = (
 				24447DB22AB51D91008A25C2 /* SearchResult.swift */,
+				243C781A2BFE6C2600B654DD /* ChatModels.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		2426AA092AB2618B003E64B2 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		2426AA0A2AB261A2003E64B2 /* Controllers */ = {
@@ -311,6 +306,7 @@
 				24447DB32AB51D91008A25C2 /* SearchResult.swift in Sources */,
 				2426A9F32AB2608B003E64B2 /* AppDelegate.swift in Sources */,
 				2426A9F52AB2608B003E64B2 /* SceneDelegate.swift in Sources */,
+				243C781B2BFE6C2600B654DD /* ChatModels.swift in Sources */,
 				24447DA72AB49312008A25C2 /* ChatViewController.swift in Sources */,
 				2426AA242AB26737003E64B2 /* PhotoViewerViewController.swift in Sources */,
 				24447DAC2AB4B150008A25C2 /* StorageManager.swift in Sources */,

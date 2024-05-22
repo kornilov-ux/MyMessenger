@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseDatabase
+import MessageKit
 
 final class DatabaseManager {
 
@@ -23,6 +24,19 @@ final class DatabaseManager {
 	}
 }
 
+extension DatabaseManager {
+
+	/// Returns dictionary node at child path
+	public func getDataFor(path: String, completion: @escaping (Result<Any, Error>) -> Void) {
+		database.child("\(path)").observeSingleEvent(of: .value) { snapshot in
+			guard let value = snapshot.value else {
+				completion(.failure(DatabaseError.failedToFetch))
+				return
+			}
+			completion(.success(value))
+		}
+	}
+}
 
 
 // MARK: - Account Managment
@@ -54,7 +68,7 @@ extension DatabaseManager {
 			}
 			
 			guard error == nil else {
-				print("failed ot write to database")
+				print("failed to write to database")
 				completion(false)
 				return
 			}
@@ -119,27 +133,23 @@ extension DatabaseManager {
 			}
 		}
 	}
-	
-	
-	
 }
 
 //MARK: - seding messages / conversation
 
 extension DatabaseManager {
 	
-	/// Creates a new conversation with target user emamil and first message sent
+	/// Creates a new conversation with target user email and first message sent
 	public func createNewConversation(with otherUserEmail: String, name: String, firstMessage: Message, completion: @escaping (Bool) -> Void) {
-		guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String
-			   else {
+		guard let currentEmail = UserDefaults.standard.value(forKey: "email") as? String,
+			  let currentNamme = UserDefaults.standard.value(forKey: "name") as? String else {
 			return
 		}
-		// let currentNamme = UserDefaults.standard.value(forKey: "name") as? String
 		
 		let safeEmail = DatabaseManager.safeEmail(emailAddress: currentEmail)
 		let ref = database.child("\(safeEmail)")
 
-		ref.observeSingleEvent(of: .value, with: { snapshot in 
+		ref.observeSingleEvent(of: .value, with: { [weak self] snapshot in 
 			guard var userNode = snapshot.value as? [String: Any] else {
 				completion(false)
 				print("user not found")
@@ -154,23 +164,7 @@ extension DatabaseManager {
 			switch firstMessage.kind {
 			case .text(let messageText):
 				message = messageText
-			case .attributedText(_):
-				break
-			case .photo(_):
-				break
-			case .video(_):
-				break
-			case .location(_):
-				break
-			case .emoji(_):
-				break
-			case .audio(_):
-				break
-			case .contact(_):
-				break
-			case .linkPreview(_):
-				break
-			case .custom(_):
+			case .attributedText(_), .photo(_), .video(_), .location(_), .emoji(_), .audio(_), .contact(_),.custom(_), .linkPreview(_):
 				break
 			}
 			
@@ -187,7 +181,33 @@ extension DatabaseManager {
 				]
 			]
 			
+			///code from the last commit
+			let recipient_newConversationData: [String: Any] = [
+				"id": conversationId,
+				"other_user_email": safeEmail,
+				"name": currentNamme,
+				"latest_message": [
+					"date": dateString,
+					"message": message,
+					"is_read": false
+				]
+			]
+			// Update recipient conversaiton entry
 			
+			self?.database.child("\(otherUserEmail)/conversations").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+				if var conversatoins = snapshot.value as? [[String: Any]] {
+					// append
+					conversatoins.append(recipient_newConversationData)
+					self?.database.child("\(otherUserEmail)/conversations").setValue(conversatoins)
+				}
+				else {
+					// create
+					self?.database.child("\(otherUserEmail)/conversations").setValue([recipient_newConversationData])
+				}
+			})
+			///code from the last commit
+			
+			// Update current user conversation entry
 			if var conversations = userNode["conversations"] as? [[String: Any]] {
 				// conversation array exists for current user
 				// you should append
@@ -239,23 +259,7 @@ extension DatabaseManager {
 			
 		case .text(let messageText):
 			message = messageText
-		case .attributedText(_):
-			break
-		case .photo(_):
-			break
-		case .video(_):
-			break
-		case .location(_):
-			break
-		case .emoji(_):
-			break
-		case .audio(_):
-			break
-		case .contact(_):
-			break
-		case .linkPreview(_):
-			break
-		case .custom(_):
+		case .attributedText(_), .photo(_), .video(_), .location(_), .emoji(_), .audio(_), .contact(_),.custom(_), .linkPreview(_):
 			break
 		}
 		
@@ -281,24 +285,26 @@ extension DatabaseManager {
 				 collectionMessage
 			 ]
 		 ]
+		print("adding conversation: \(conversationID)")
 		
 		database.child("\(conversationID)").setValue(value, withCompletionBlock: { error, _ in
-					guard error == nil else {
-						completion(false)
-						return
-					}
-					completion(true)
-				})
+			guard error == nil else {
+				completion(false)
+				return
+			}
+			completion(true)
+		})
 	}
 	
 	/// Fetches and returns all conversations for the user with passed in email
 	public func getAllConversations(for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void) {
 		database.child("\(email)/conversations").observe(.value, with: { snapshot in 
+			print("Snapshot value: \(String(describing: snapshot.value))")
 			guard let value = snapshot.value as? [[String: Any]] else {
 				completion(.failure(DatabaseError.failedToFetch))
 				return
 			}
-			
+			print("Conversations from snapshot: \(value)")
 			let conversations: [Conversation] = value.compactMap({ dictionary in
 				guard let conversationId = dictionary["id"] as? String,
 					  let name = dictionary["name"] as? String,
@@ -318,31 +324,200 @@ extension DatabaseManager {
 									otherUserEmail: otherUserEmail,
 									latestMessage: latestMmessageObject)
 			})
+			print("Parsed conversations: \(conversations)")
 			completion(.success(conversations))
 		})
 	}
 	
-	/// Gets all messages for a given conversatino
+	/// Gets all messages for a given conversation
 	public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<[Message], Error>) -> Void) {
-		
+		print("Fetching messages for conversation with ID: \(id)")
+		database.child("\(id)/messages").observe(.value, with: { snapshot in
+			print("Received snapshot: \(snapshot)")
+			guard let value = snapshot.value as? [[String: Any]] else {
+				print("Failed to convert snapshot value to [[String: Any]]")
+				completion(.failure(DatabaseError.failedToFetch))
+				return
+			}
+
+			var messages: [Message] = []
+			for messageData in value {
+				if let message = self.parseMessage(from: messageData) {
+					messages.append(message)
+				} else {
+					print("Failed to convert message dictionary to Message object")
+				}
+			}
+
+			print("Successfully created Message objects")
+			completion(.success(messages))
+		})
 	}
+
+	private func parseMessage(from data: [String: Any]) -> Message? {
+		guard let name = data["name"] as? String,
+			  //let isRead = data["is_read"] as? Bool,
+			  let messageID = data["id"] as? String,
+			  let content = data["content"] as? String,
+			  let senderEmail = data["sender_email"] as? String,
+			  let type = data["type"] as? String,
+			  let dateString = data["date"] as? String,
+			  let date = ChatViewController.dateFormatter.date(from: dateString) else {
+			return nil
+		}
+
+		var kind: MessageKind?
+
+		switch type {
+		case "text":
+			kind = .text(content)
+		default:
+			// Обработка неизвестного типа сообщения
+			break
+		}
+
+		guard let finalKind = kind else {
+			return nil
+		}
+
+		let sender = Sender(photoURL: "",
+							senderId: senderEmail,
+							displayName: name)
+
+		return Message(sender: sender,
+					   messageId: messageID,
+					   sentDate: date,
+					   kind: finalKind)
+	}
+		///code from the last commit
 	
 	/// Sends a message with target conversation and message
-	public func sendMessage(to conversation: String, mmessage: Message, completion: @escaping (Bool) -> Void) {
+	public func sendMessage(to conversation: String, otherUserEmail: String, name: String, newMessage: Message, completion: @escaping (Bool) -> Void) {
+		// add new message to messages
+		// update sender latest message
+		// update recipient latest message
+		guard let myEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+			completion(false)
+			return
+		}
 		
+		let currentEmail = DatabaseManager.safeEmail(emailAddress: myEmail)
+		
+		database.child("\(conversation)/messages").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+			guard let strongSelf = self else {
+				return
+			}
+			
+			guard var currentMessages = snapshot.value as? [[String: Any]] else {
+				completion(false)
+				return
+			}
+			
+			let messageDate = newMessage.sentDate
+			let dateString = ChatViewController.dateFormatter.string(from: messageDate)
+
+			var message = ""
+			switch newMessage.kind {
+			case .text(let messageText):
+				message = messageText
+			case .attributedText(_):
+				break
+			case .photo(let mediaItem):
+				if let targetUrlString = mediaItem.url?.absoluteString {
+					message = targetUrlString
+				}
+				break
+			case .video(let mediaItem):
+				if let targetUrlString = mediaItem.url?.absoluteString {
+					message = targetUrlString
+				}
+				break
+			case .location(let locationData):
+				let location = locationData.location
+				message = "\(location.coordinate.longitude),\(location.coordinate.latitude)"
+				break
+			case .emoji(_):
+				break
+			case .audio(_):
+				break
+			case .contact(_):
+				break
+			case .custom(_), .linkPreview(_):
+				break
+			}
+			
+			guard let myEmmail = UserDefaults.standard.value(forKey: "email") as? String else {
+				completion(false)
+				return
+			}
+			
+			let currentUserEmail = DatabaseManager.safeEmail(emailAddress: myEmmail)
+			
+			let newMessageEntry: [String: Any] = [
+				"id": newMessage.messageId,
+				"type": newMessage.kind.messageKindString,
+				"content": message,
+				"date": dateString,
+				"sender_email": currentUserEmail,
+				"is_read": false,
+				"name": name
+			]
+			
+			currentMessages.append(newMessageEntry)
+			
+			strongSelf.database.child("\(conversation)/messages").setValue(currentMessages) { error, _ in
+				guard error == nil else {
+					completion(false)
+					return
+				}
+				
+				// MARK: -soon
+				
+				completion(true)
+			}
+		})
 	}
 	
+	public func conversationExists(iwth targetRecipientEmail: String, completion: @escaping (Result<String, Error>) -> Void) {
+		   let safeRecipientEmail = DatabaseManager.safeEmail(emailAddress: targetRecipientEmail)
+		   guard let senderEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+			   return
+		   }
+		   let safeSenderEmail = DatabaseManager.safeEmail(emailAddress: senderEmail)
+
+		   database.child("\(safeRecipientEmail)/conversations").observeSingleEvent(of: .value, with: { snapshot in
+			   guard let collection = snapshot.value as? [[String: Any]] else {
+				   completion(.failure(DatabaseError.failedToFetch))
+				   return
+			   }
+
+			   // iterate and find conversation with target sender
+			   if let conversation = collection.first(where: {
+				   guard let targetSenderEmail = $0["other_user_email"] as? String else {
+					   return false
+				   }
+				   return safeSenderEmail == targetSenderEmail
+			   }) {
+				   // get id
+				   guard let id = conversation["id"] as? String else {
+					   completion(.failure(DatabaseError.failedToFetch))
+					   return
+				   }
+				   completion(.success(id))
+				   return
+			   }
+
+			   completion(.failure(DatabaseError.failedToFetch))
+			   return
+		   })
+	   }
+	
 }
-
-
-
-
 
 struct ChatAppUser {
 	let firstName: String
 	let lastName: String
 	let emailAddress: String
-//	let profilePictureUrl: String
 	
 	var safeEmail: String {
 		var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")

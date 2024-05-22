@@ -12,11 +12,11 @@ class NewConversationViewController: UIViewController {
 	
 	private let spinner = JGProgressHUD(style: .dark)
 	
-	private var users = [[String: String]]()	
-	private var results = [[String: String]]()
+	private var users = [[String: String]]()
+	private var results = [SearchResult]()
 	
 	private var hasFetched = false
-	public var completion: (([String: String]) -> (Void))?
+	public var completion: ((SearchResult) -> (Void))?
 	
 	private let searchBar: UISearchBar = {
 		let searchBar = UISearchBar()
@@ -27,8 +27,8 @@ class NewConversationViewController: UIViewController {
 	private let tableView: UITableView = {
 		let table = UITableView()
 		table.isHidden = true
-		table.register(UITableViewCell.self,
-					   forCellReuseIdentifier: "cell")
+		table.register(NewConversationCell.self,
+					   forCellReuseIdentifier: NewConversationCell.identifier)
 		return table
 	}()
 	
@@ -44,12 +44,11 @@ class NewConversationViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
 		view.addSubview(noResultsLabel)
 		view.addSubview(tableView)
+		
 		tableView.delegate = self
 		tableView.dataSource = self
-		
 		searchBar.delegate = self
 		view.backgroundColor = .white
 		navigationController?.navigationBar.topItem?.titleView = searchBar
@@ -72,8 +71,6 @@ class NewConversationViewController: UIViewController {
 	@objc private func dismissSelf() {
 		dismiss(animated: true, completion: nil)
 	}
-    
-
 }
 
 extension NewConversationViewController: UITableViewDelegate, UITableViewDataSource {
@@ -82,8 +79,10 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-		cell.textLabel?.text = results[indexPath.row]["name"]
+		let model = results[indexPath.row]
+		let cell = tableView.dequeueReusableCell(withIdentifier: NewConversationCell.identifier,
+												 for: indexPath) as! NewConversationCell
+		cell.configure(with: model)
 		return cell
 	}
 	
@@ -100,9 +99,6 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
 	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 90
 	}
-	
-	
-	
 }
 
 
@@ -150,20 +146,27 @@ extension NewConversationViewController: UISearchBarDelegate {
 
 		self.spinner.dismiss()
 
-		let results: [[String:String]] = self.users.filter({  
+		let results: [SearchResult] = users.filter({
 			guard let email = $0["email"], email != safeEmail else {
 				return false
 			}
-
+			
 			guard let name = $0["name"]?.lowercased() else {
 				return false
 			}
-
+			
 			return name.hasPrefix(term.lowercased())
+		}).compactMap({
+			
+			guard let email = $0["email"],
+				  let name = $0["name"] else {
+				return nil
+			}
+			
+			return SearchResult(name: name, email: email)
 		})
-
+		
 		self.results = results
-
 		updateUI()
 	}
 
@@ -171,13 +174,12 @@ extension NewConversationViewController: UISearchBarDelegate {
 		if results.isEmpty {
 			noResultsLabel.isHidden = false
 			tableView.isHidden = true
-		}
-		else {
+		} else {
 			noResultsLabel.isHidden = true
 			tableView.isHidden = false
 			tableView.reloadData()
 		}
 	}
-	
-	
 }
+
+// done

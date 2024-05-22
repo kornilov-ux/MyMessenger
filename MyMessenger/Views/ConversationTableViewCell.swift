@@ -82,7 +82,5 @@ class ConversationTableViewCell: UITableViewCell {
 				}
 			})
 		}
-
-
- 
 }
+// done
