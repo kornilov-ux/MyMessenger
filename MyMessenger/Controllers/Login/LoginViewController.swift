@@ -69,9 +69,19 @@ class LoginViewController: UIViewController {
 		return button
 	}()
 	
+	private var loginObserver: NSObjectProtocol?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, 
+															   object: nil, queue: .main, 
+															   using: { [weak self] _ in
+			guard let strongSelf = self else {
+				return
+			}
+			strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+		})
+		
 		title = "Log In"
 		view.backgroundColor = .white
 		
@@ -93,7 +103,12 @@ class LoginViewController: UIViewController {
 		scrollView.addSubview(emailField)
 		scrollView.addSubview(passwordField)
 		scrollView.addSubview(loginButton)
-		
+	}
+	
+	deinit {
+		if let observer = loginObserver {
+			NotificationCenter.default.removeObserver(observer)
+		}
 	}
 	
 	override func viewDidLayoutSubviews() {
@@ -134,11 +149,9 @@ class LoginViewController: UIViewController {
 			alertUserLoginError()
 			return
 		}
-		
 		spinner.show(in: view)
 		
 		// Firebase Log In
-		
 		FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self] authResult, error in
 			guard let strongSelf = self else {
 				return
@@ -154,8 +167,8 @@ class LoginViewController: UIViewController {
 			}
 			
 			let user = result.user
-			
 			let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
+			
 			DatabaseManager.shared.getDataFor(path: safeEmail, completion: { result in
 				switch result {
 				case .success(let data):
@@ -176,10 +189,6 @@ class LoginViewController: UIViewController {
 			print("Logged in User: \(user)")
 			strongSelf.navigationController?.dismiss(animated: true, completion: nil)
 		})
-		
-		
-		
-		
 	}
 	
 	func alertUserLoginError() {
@@ -190,18 +199,11 @@ class LoginViewController: UIViewController {
 									  style: .cancel, handler: nil))
 		present(alert, animated: true)
 	}
-	
-	
-	
-	
-	
 }
 
 
 extension LoginViewController: UITextFieldDelegate {
-	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-		
 		if textField == emailField {
 			passwordField.becomeFirstResponder() // focus Field 
 		}
@@ -211,5 +213,5 @@ extension LoginViewController: UITextFieldDelegate {
 		
 		return true
 	}
-	
 }
+// done

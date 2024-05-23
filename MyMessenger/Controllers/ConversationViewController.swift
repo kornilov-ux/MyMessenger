@@ -58,13 +58,13 @@ class ConversationViewController: UIViewController {
 		setupTableView()
 		startListeningForCOnversations()
 		
-//		loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
-//			guard let strongSelf = self else {
-//				return
-//			}
-//			
-//			strongSelf.startListeningForCOnversations()
-//		})		
+		loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
+			guard let strongSelf = self else {
+				return
+			}
+			
+			strongSelf.startListeningForCOnversations()
+		})		
 	}
 	
 	private func startListeningForCOnversations() {
@@ -220,4 +220,23 @@ extension ConversationViewController: UITableViewDelegate, UITableViewDataSource
 		return .delete
 	}
 	
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
+			// begin delete
+			let conversationId = conversations[indexPath.row].id
+			tableView.beginUpdates()
+			self.conversations.remove(at: indexPath.row)
+			tableView.deleteRows(at: [indexPath], with: .left)
+			
+			DatabaseManager.shared.deleteConversation(conversationId: conversationId, completion: { success in
+				if !success {
+					// 
+					
+				}
+			})
+			
+			tableView.endUpdates()
+		}
+	}
 }
+// done
