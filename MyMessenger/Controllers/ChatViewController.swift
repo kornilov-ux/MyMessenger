@@ -9,7 +9,6 @@ import UIKit
 import MessageKit
 import InputBarAccessoryView
 import SDWebImage
-import CoreLocation
 
 
 struct Media: MediaItem {
@@ -92,12 +91,6 @@ final class ChatViewController: MessagesViewController {
 		actionSheet.addAction(UIAlertAction(title: "Photo", style: .default, handler: { [weak self] _ in
 			self?.presentPhotoInputActionsheet()
 		}))
-		actionSheet.addAction(UIAlertAction(title: "Audio", style: .default, handler: {  _ in
-
-		}))
-//		actionSheet.addAction(UIAlertAction(title: "Location", style: .default, handler: { [weak self]  _ in
-//			self?.presentLocationPicker()
-//		}))
 		actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
 		present(actionSheet, animated: true)
@@ -415,18 +408,7 @@ extension ChatViewController: MessageCellDelegate {
 			return
 		}
 
-		let message = messages[indexPath.section]
-
-		switch message.kind {
-		case .location(let locationData):
-			let coordinates = locationData.location.coordinate
-			let vc = LocationPickerViewController(coordinates: coordinates)
-			
-			vc.title = "Location"
-			navigationController?.pushViewController(vc, animated: true)
-		default:
-			break
-		}
+		
 	}
 
 	func didTapImage(in cell: MessageCollectionViewCell) {

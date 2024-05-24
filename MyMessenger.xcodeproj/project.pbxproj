@@ -21,7 +21,7 @@
 		2426AA242AB26737003E64B2 /* PhotoViewerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426AA232AB26737003E64B2 /* PhotoViewerViewController.swift */; };
 		2426AA262AB26783003E64B2 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2426AA252AB26783003E64B2 /* Extension.swift */; };
 		243C781B2BFE6C2600B654DD /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243C781A2BFE6C2600B654DD /* ChatModels.swift */; };
-		243C781D2BFEA75900B654DD /* LocationPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243C781C2BFEA75900B654DD /* LocationPickerViewController.swift */; };
+		243C781F2BFFFE6200B654DD /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243C781E2BFFFE6200B654DD /* ProfileViewModel.swift */; };
 		24447D7F2AB26C46008A25C2 /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24447D7E2AB26C46008A25C2 /* ConversationViewController.swift */; };
 		24447D842AB37393008A25C2 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 24447D832AB37393008A25C2 /* FirebaseAnalytics */; };
 		24447D862AB37393008A25C2 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 24447D852AB37393008A25C2 /* FirebaseAnalyticsSwift */; };
@@ -65,7 +65,7 @@
 		2426AA232AB26737003E64B2 /* PhotoViewerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerViewController.swift; sourceTree = "<group>"; };
 		2426AA252AB26783003E64B2 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		243C781A2BFE6C2600B654DD /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
-		243C781C2BFEA75900B654DD /* LocationPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerViewController.swift; sourceTree = "<group>"; };
+		243C781E2BFFFE6200B654DD /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		24447D7E2AB26C46008A25C2 /* ConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		24447D972AB37494008A25C2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		24447D992AB3A984008A25C2 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
@@ -157,6 +157,7 @@
 			children = (
 				24447DB22AB51D91008A25C2 /* SearchResult.swift */,
 				243C781A2BFE6C2600B654DD /* ChatModels.swift */,
+				243C781E2BFFFE6200B654DD /* ProfileViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -171,7 +172,6 @@
 				2426AA212AB26726003E64B2 /* VideoPlayerViewController.swift */,
 				2426AA232AB26737003E64B2 /* PhotoViewerViewController.swift */,
 				24447DA62AB49312008A25C2 /* ChatViewController.swift */,
-				243C781C2BFEA75900B654DD /* LocationPickerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -244,7 +244,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					2426A9EE2AB2608B003E64B2 = {
 						CreatedOnToolsVersion = 14.1;
@@ -297,7 +297,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2426AA1E2AB266E6003E64B2 /* ProfileViewController.swift in Sources */,
-				243C781D2BFEA75900B654DD /* LocationPickerViewController.swift in Sources */,
 				24447DB52AB52396008A25C2 /* NewConversationCell.swift in Sources */,
 				24447D9A2AB3A984008A25C2 /* DatabaseManager.swift in Sources */,
 				2426AA202AB26711003E64B2 /* NewConversationViewController.swift in Sources */,
@@ -309,6 +308,7 @@
 				2426AA222AB26726003E64B2 /* VideoPlayerViewController.swift in Sources */,
 				24447DB32AB51D91008A25C2 /* SearchResult.swift in Sources */,
 				2426A9F32AB2608B003E64B2 /* AppDelegate.swift in Sources */,
+				243C781F2BFFFE6200B654DD /* ProfileViewModel.swift in Sources */,
 				2426A9F52AB2608B003E64B2 /* SceneDelegate.swift in Sources */,
 				243C781B2BFE6C2600B654DD /* ChatModels.swift in Sources */,
 				24447DA72AB49312008A25C2 /* ChatViewController.swift in Sources */,
@@ -343,6 +343,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -375,6 +376,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -389,7 +391,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -403,6 +405,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -435,6 +438,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -443,7 +447,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
