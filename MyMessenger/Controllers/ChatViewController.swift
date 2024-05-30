@@ -404,11 +404,9 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
 
 extension ChatViewController: MessageCellDelegate {
 	func didTapMessage(in cell: MessageCollectionViewCell) {
-		guard let indexPath = messagesCollectionView.indexPath(for: cell) else {
-			return
-		}
-
-		
+//		guard let indexPath = messagesCollectionView.indexPath(for: cell) else {
+//			return
+//		}
 	}
 
 	func didTapImage(in cell: MessageCollectionViewCell) {

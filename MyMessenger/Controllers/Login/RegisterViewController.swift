@@ -102,7 +102,7 @@ class RegisterViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		//title = "Log In"
+		title = "Log In"
 		view.backgroundColor = .systemBackground
 		
 		navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
@@ -219,9 +219,13 @@ class RegisterViewController: UIViewController {
 					return
 				}
 				
+				UserDefaults.standard.setValue(email, forKey: "email")
+				UserDefaults.standard.setValue("\(firstName) \(lastName)", forKey: "name")
+				
 				let chatUser = ChatAppUser(firstName: firstName,
 										  lastName: lastName,
 										  emailAddress: email)
+				
 				DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
 					if success {
 						// upload image
@@ -243,17 +247,9 @@ class RegisterViewController: UIViewController {
 				})
 				
 				strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-				
 			})
-			
 		})
-		
-	
-
-			
-		
 	}
-	
 	
 	func alertUserLoginError(message: String = "Please enter all information to create a new account.") {
 		let alert = UIAlertController(title: "Woops",
@@ -269,12 +265,10 @@ class RegisterViewController: UIViewController {
 		vc.title = "Create Account"
 		navigationController?.pushViewController(vc, animated: true)
 	}
-	
 }
 
 
-extension RegisterViewController: UITextFieldDelegate {
-	
+extension RegisterViewController: UITextFieldDelegate {	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		
 		if textField == emailField {
@@ -286,7 +280,6 @@ extension RegisterViewController: UITextFieldDelegate {
 		
 		return true
 	}
-	
 }
 
 
